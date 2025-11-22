@@ -1,18 +1,35 @@
 # NestJS GraphQL API
 
-A GraphQL API built with NestJS and TypeScript, featuring user management and settings.
+A GraphQL API built with NestJS and TypeScript, featuring user management with PostgreSQL database integration.
 
 ## Description
 
-This project demonstrates a NestJS application with GraphQL integration, implementing queries, mutations, and field resolvers for user management.
+This project demonstrates a NestJS application with GraphQL integration using Apollo Server, implementing queries, mutations, and field resolvers for user management. It uses TypeORM for database operations with PostgreSQL.
 
-## Project setup
+## Prerequisites
+
+- Node.js (v18 or higher)
+- PostgreSQL database
+- pnpm package manager
+
+## Database Setup
+
+Create a PostgreSQL database with the following configuration (or update [app.module.ts](src/app.module.ts) with your settings):
+
+- **Host:** localhost
+- **Port:** 5432
+- **Username:** postgres
+- **Password:** root
+- **Database:** nest-graphql
+- **Schema:** public
+
+## Project Setup
 
 ```bash
 $ pnpm install
 ```
 
-## Compile and run the project
+## Compile and Run the Project
 
 ```bash
 # development
@@ -25,7 +42,7 @@ $ pnpm run start:dev
 $ pnpm run start:prod
 ```
 
-## Run tests
+## Run Tests
 
 ```bash
 # unit tests
@@ -65,11 +82,22 @@ type UserSetting {
 }
 ```
 
+#### Input Types
+
 **CreateUserInput**
 ```graphql
 input CreateUserInput {
   username: String!
   displayName: String
+}
+```
+
+**CreateUserSettingsInput**
+```graphql
+input CreateUserSettingsInput {
+  userId: Int!
+  receiveNotifications: Boolean!
+  receiveEmails: Boolean!
 }
 ```
 
@@ -129,32 +157,54 @@ mutation {
 }
 ```
 
+**Create user settings**
+```graphql
+mutation {
+  createUserSetting(createUserSettingInput: {
+    userId: 1
+    receiveNotifications: true
+    receiveEmails: false
+  }) {
+    userId
+    receiveNotifications
+    receiveEmails
+  }
+}
+```
+
 ## Project Structure
 
 ```
 src/
 ├── graphql/
 │   ├── models/
-│   │   ├── user.ts              # User GraphQL model
-│   │   └── user.setting.ts      # UserSetting GraphQL model
+│   │   ├── user.ts                    # User GraphQL model
+│   │   └── user.setting.ts            # UserSetting GraphQL model
 │   ├── inputs/
-│   │   └── create.user.input.ts # Input type for creating users
-│   └── resolvers/
-│       └── UserResolver.ts      # User queries, mutations, and field resolvers
-├── _mocks_/
-│   ├── users.ts                 # Mock user data
-│   └── user.settings.ts         # Mock user settings data
-└── app.module.ts                # Main application module
+│   │   ├── create.user.input.ts       # Input type for creating users
+│   │   └── create.user.setting.ts     # Input type for creating user settings
+│   ├── resolvers/
+│   │   └── user.setting.resolver.ts   # User settings mutations
+│   └── schema.gql                      # Auto-generated GraphQL schema
+├── users/
+│   ├── user.module.ts                  # Users module
+│   ├── user.service.ts                 # User business logic
+│   ├── user.resolver.ts                # User queries, mutations, and field resolvers
+│   ├── user.setting.service.ts         # User settings business logic
+│   └── user.setting.resolver.ts        # User settings resolvers
+└── app.module.ts                       # Main application module
 ```
 
 ## Features
 
 - GraphQL API with NestJS
 - Code-first approach using TypeScript decorators
+- PostgreSQL database integration with TypeORM
 - User management (CRUD operations)
 - User settings with field resolvers
 - Input types for mutations
-- Mock data storage
+- Auto-generated GraphQL schema
+- Module-based architecture
 
 ## Tech Stack
 
@@ -163,12 +213,15 @@ src/
 - [@nestjs/graphql](https://docs.nestjs.com/graphql/quick-start) - GraphQL module for NestJS
 - [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript
 - [Apollo Server](https://www.apollographql.com/docs/apollo-server/) - GraphQL server
+- [TypeORM](https://typeorm.io/) - ORM for TypeScript and JavaScript
+- [PostgreSQL](https://www.postgresql.org/) - Open source relational database
 
 ## Resources
 
 - [NestJS Documentation](https://docs.nestjs.com)
 - [NestJS GraphQL Documentation](https://docs.nestjs.com/graphql/quick-start)
 - [GraphQL Documentation](https://graphql.org/learn/)
+- [TypeORM Documentation](https://typeorm.io/)
 
 ## License
 
